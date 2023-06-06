@@ -2,10 +2,8 @@ body {
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  padding: 0 1rem 1rem 1rem;
-  max-width: 680px;
   margin: 0 auto;
-  background: #fff;
+  background: rgb(229, 232, 235);
   color: #333;
 }
 
@@ -29,4 +27,22 @@ iframe {
   width: 100%;
   border-radius: 0.5rem;
   filter: invert(1);
+}
+
+
+.titleContainer {
+  background-color: rgb(213, 216, 231);
+  box-shadow: 0 -15px 14px -15px rgb(214, 225, 255) inset;
+}
+
+.title, main {
+  text-align: left;
+  margin: auto;
+  padding-bottom: 1rem;
+  width: 900px;
+  max-width: 95vw;
+}
+
+.title {
+  color: rgb(90, 110, 157);
 }

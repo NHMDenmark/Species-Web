@@ -1,8 +1,8 @@
 import Layout from "../components/layout"
 
-export default function StatusPage() {
+export default function SessionsPage() {
   return (
-    <Layout title="Status">
+    <Layout title="Sessions">
       <p>
         
       </p>
