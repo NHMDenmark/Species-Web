@@ -28,34 +28,37 @@ export default function Header() {
             </div>
           </nav>
           <div className={styles.signedInStatus}>
-            <div 
+            <div
               className={`nojs-show ${!session && loading ? styles.loading : styles.loaded} ${unauthenticated && styles.unauthenticated}`}
             >
-              {session?.user && (
-                <div className={styles.userBox}>
-                  {session.user.image && (
-                    <span
-                      style={{ backgroundImage: `url('${session.user.image}')` }}
-                      className={styles.avatar}
-                    />
-                  )}
-                  <div className={styles.signedInText}>
-                    <small>Signed in as</small>
-                    <br />
-                    <strong>{session.user.email ?? session.user.name}</strong>
-                  </div>
-                  <a
-                    href="/api/auth/signout"
-                    className={styles.buttonPrimary}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      signOut()
-                    }}
-                  >
-                    Sign&nbsp;out
-                  </a>
-                </div>
-              )}
+
+              <div className={styles.userBox}>
+                {session?.user && (
+                  <>
+                    {session.user.image && (
+                      <span
+                        style={{ backgroundImage: `url('${session.user.image}')` }}
+                        className={styles.avatar}
+                      />
+                    )}
+                    <div className={styles.signedInText}>
+                      <small>Signed in as</small>
+                      <br />
+                      <strong>{session.user.email ?? session.user.name}</strong>
+                    </div>
+                  </>
+                )}
+                <a
+                  href="/api/auth/signout"
+                  className={styles.buttonPrimary}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    signOut()
+                  }}
+                >
+                  Sign&nbsp;out
+                </a>
+              </div>
             </div>
           </div>
         </div>

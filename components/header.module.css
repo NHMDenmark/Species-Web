@@ -62,7 +62,7 @@
   float: left;
   height: 2.8rem;
   width: 2.8rem;
-  background-color: white;
+  background-color: inherit;
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -119,11 +119,12 @@
   .header {
     min-height: 80px;
   }
-  .loaded {
+  .loaded, .loading {
     background-color: inherit;
     box-shadow: none;
     padding: .6rem 0rem;
     top: 0rem;
+    opacity: 1;
   }
   .avatar, .signedInText {
     display: none;
