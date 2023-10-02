@@ -4,6 +4,9 @@ import { withAuth } from "next-auth/middleware"
 export default withAuth({
   callbacks: {
     authorized({ req, token }) {
+      if (req.nextUrl.pathname == "/api/folderupload") {
+        return req.headers.get('Authorization') == process.env.API_SECRET
+      }
       return !!token
     },
   },

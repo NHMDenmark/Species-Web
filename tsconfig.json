@@ -21,6 +21,6 @@
     "next-auth.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "pages/api/folderupload.js", "pages/api/file.js"  ],
   "exclude": ["node_modules"]
 }

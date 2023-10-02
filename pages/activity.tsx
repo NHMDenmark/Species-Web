@@ -1,8 +1,8 @@
 import Layout from "../components/layout"
 
-export default function CorrectionsPage() {
+export default function ActivityPage() {
   return (
-    <Layout title="Corrections">
+    <Layout title="Activity">
       <p>
         
       </p>

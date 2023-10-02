@@ -2,14 +2,23 @@ import NavLink from "next/link"
 import styles from "./header.module.css"
 import { signOut, useSession } from "next-auth/react"
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 // The approach used in this component shows how to build a sign in and sign out
 // component that works on pages which support both client and server side
 // rendering, and avoids any flash incorrect content on initial page load.
 export default function Header() {
   const { data: session, status } = useSession()
-  const loading = status === "loading"
-  const unauthenticated = status === "unauthenticated"
+  const [loading, setLoading] = useState<boolean>(status === "loading")
+
+  useEffect(() => {
+    const loaded = status !== "loading"
+    if (loaded) {
+      setTimeout(() => {
+        setLoading(false)
+      }, 500)
+    }
+  }, [status])
 
   const router = useRouter();
 
@@ -23,13 +32,13 @@ export default function Header() {
           <nav>
             <div className={styles.navItems}>
               <NavLink className={`${styles.navItem} ${router.pathname == "/" ? styles.active : ""}`} href="/">Status</NavLink>
-              <NavLink className={`${styles.navItem} ${router.pathname == "/sessions" ? styles.active : ""}`} href="/sessions">Sessions</NavLink>
-              <NavLink className={`${styles.navItem} ${router.pathname == "/corrections" ? styles.active : ""}`} href="/corrections">Corrections</NavLink>
+              <NavLink className={`${styles.navItem} ${router.pathname == "/folders" ? styles.active : ""}`} href="/folders">Folders</NavLink>
+              <NavLink className={`${styles.navItem} ${router.pathname == "/activity" ? styles.active : ""}`} href="/activity">Activity</NavLink>
             </div>
           </nav>
           <div className={styles.signedInStatus}>
             <div
-              className={`nojs-show ${!session && loading ? styles.loading : styles.loaded} ${unauthenticated && styles.unauthenticated}`}
+              className={`nojs-show ${loading ? styles.loading : styles.loaded}`}
             >
 
               <div className={styles.userBox}>

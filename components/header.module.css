@@ -1,7 +1,7 @@
 /* Set min-height to avoid page reflow while session loading */
 .header {
   background-color: rgb(213, 216, 231);
-  min-height: 130px;
+  min-height: 120px;
   transition: all .25s ease;
 }
 
@@ -9,7 +9,7 @@
   margin: auto;
   display: flex;
   justify-content: space-between;
-  width: 900px;
+  width: 1100px;
   max-width: 95vw;
 }
 

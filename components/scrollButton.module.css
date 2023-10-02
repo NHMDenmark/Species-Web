@@ -1,0 +1,24 @@
+.button {
+    position: fixed;
+    color: rgb(229, 232, 235);
+    color: rgb(90, 110, 157);
+    border: none;
+    border-radius: 2rem;
+    padding: .5rem;
+    font-size: 30px;
+    bottom: 2rem;
+    right: 2rem;
+    line-height: 0;
+    transition: all .25s ease;
+}
+
+.button:hover {
+    background-color: rgb(90, 110, 157);
+    color: rgb(229, 232, 235);
+}
+
+@media only screen and (max-width: 900px) {
+    .button {
+        visibility: hidden;
+    }
+}

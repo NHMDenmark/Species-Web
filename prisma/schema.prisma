@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Cover {
+  id                     Int      @id @default(autoincrement())
+  image                  String?  @db.MediumText
+  label                  String?  @db.VarChar(100)
+  ocr_read_json          String?  @db.Text
+  area                   String?  @db.VarChar(100)
+  family                 String?  @db.VarChar(100)
+  genus                  String?  @db.VarChar(100)
+  species                String?  @db.VarChar(100)
+  variety                String?  @db.VarChar(100)
+  subsp                  String?  @db.VarChar(100)
+  gbif_match_json        String?  @db.Text
+  highest_classification String?  @db.VarChar(100)
+  flagged                Boolean?
+  approved               Boolean?
+
+  @@map("covers")
+}
