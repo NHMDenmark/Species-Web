@@ -24,6 +24,11 @@ services:
       - mysql_server
     env_file:
       - .env.local
+    volumes:
+      - label:/app/image/label
+      - label_threshold:/app/image/label_threshold
 
 volumes:
   mysql_data:
+  label:
+  label_threshold:

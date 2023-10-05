@@ -11,33 +11,38 @@ export const config = {
 const post = async (req, res) => {
   const form = new formidable.IncomingForm();
   form.parse(req, async function (err, fields, files) {
-    await saveFile(files.file)
+    try {
+      await saveFile('./image/label/', files.label)
+      await saveFile('./image/label_threshold/', files.label_threshold)
 
-    await prisma.cover.create({
-      data: {
-        image: fields.image_cover,
-        label: fields.image_label,
-        ocr_read_json: fields.ocr_read_json,
-        area: fields.area,
-        family: fields.family,
-        genus: fields.genus,
-        species: fields.species,
-        variety: fields.variety,
-        subsp: fields.subsp,
-        gbif_match_json: fields.gbif_match_json,
-        highest_classification: fields.highest_classification,
-        flagged: Boolean(fields.flagged),
-        approved: Boolean(fields.approved)
-      }
-    })
+      await prisma.cover.create({
+        data: {
+          image: fields.image_cover,
+          label: fields.image_label,
+          ocr_read_json: fields.ocr_read_json,
+          area: fields.area,
+          family: fields.family,
+          genus: fields.genus,
+          species: fields.species,
+          variety: fields.variety,
+          subsp: fields.subsp,
+          gbif_match_json: fields.gbif_match_json,
+          highest_classification: fields.highest_classification,
+          flagged: Boolean(fields.flagged),
+          approved: Boolean(fields.approved)
+        }
+      })
+    } catch (error) {
+      return res.status(500).send(error)
+    }
 
     return res.status(201).send("")
   });
 };
 
-const saveFile = async (file) => {
+const saveFile = async (path, file) => {
   const data = fs.readFileSync(file.path)
-  fs.writeFileSync(`./public/${file.name}`, data)
+  fs.writeFileSync(`${path}${file.name}`, data)
   await fs.unlinkSync(file.path)
   return
 };

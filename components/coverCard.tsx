@@ -27,6 +27,7 @@ export default function CoverCard({ cover, index, total }: { cover: Cover, index
     const [areaCorrect, setAreaCorrect] = useState<boolean>(cover.area ? areaList.includes(cover.area) : false)
     const [highestClassification, setHighestClassification] = useState<string>(cover.highest_classification ?? "species")
     const [updates, setUpdates] = useState<Cover | any>(cover)
+    const [toggleBinary, setToggleBinary] = useState<boolean>(false)
     let update = { ...cover }
 
     function Classification({ name }: { name: string }) {
@@ -74,7 +75,7 @@ export default function CoverCard({ cover, index, total }: { cover: Cover, index
             </div>
             <div className="card">
                 <div className="left">
-                    <img src={"/" + cover.label} />
+                    <img src={(toggleBinary ? "api/image/label_threshold/" : "/api/image/label/") + cover.label} onClick={() => setToggleBinary(!toggleBinary)} />
                     <div className="ocr">
                         {cover.ocr_read_json && JSON.parse(cover.ocr_read_json).map((line: { confidence: number, words: { confidence: number, text: string }[] }) => (
                             <div>
