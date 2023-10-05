@@ -1,6 +1,7 @@
 import formidable from "formidable";
 import fs from "fs";
 import prisma from "../../prisma/prisma";
+import { Prisma } from '@prisma/client'
 
 export const config = {
   api: {
@@ -33,6 +34,7 @@ const post = async (req, res) => {
         }
       })
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) { return res.status(500).send(error.code) }
       return res.status(500).send(error)
     }
 
