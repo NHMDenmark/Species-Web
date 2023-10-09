@@ -8,8 +8,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: dassco-au
-    expose:
-      - "3306"
+    ports:
+      - "127.0.0.1:3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 
@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile
     container_name: nhmaspeciesweb
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       - mysql_server
     env_file:
