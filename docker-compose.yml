@@ -18,6 +18,8 @@ services:
     build:
       dockerfile: Dockerfile
     container_name: nhmaspeciesweb
+    environment:
+      - DATABASE_URL=mysql://root:1234@mysql_server:3306/dassco-au
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:

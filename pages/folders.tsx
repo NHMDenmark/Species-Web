@@ -1,24 +1,24 @@
-import type { Cover } from "@prisma/client"
-import { useEffect, useState } from "react"
-import CoverCard from "../components/coverCard"
-import Layout from "../components/layout"
-import Pagination from "../components/pagination"
-import type { PaginationMeta } from "../types/PaginationMeta"
+import { useEffect, useState } from 'react'
+import CoverCard from '../components/coverCard'
+import Layout from '../components/layout'
+import Pagination from '../components/pagination'
+import type { PaginationMeta } from '../types/PaginationMeta'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useRouter } from "next/router"
-import FoldersLoading from "../components/foldersLoading"
+import { useRouter } from 'next/router'
+import FoldersLoading from '../components/foldersLoading'
+import { FolderWithVersions } from '../prisma/prisma'
 
 export default function FoldersPage() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const page = searchParams.get('page')
 
   const [loading, setLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>()
   const [perPage, setPerPage] = useState<number>(10)
   const [meta, setMeta] = useState<PaginationMeta>()
-  const [folders, setFolders] = useState<Cover[]>([])
+  const [folders, setFolders] = useState<FolderWithVersions[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +29,7 @@ export default function FoldersPage() {
         },
         body: JSON.stringify({
           currentPage: currentPage,
-          perPage: perPage
+          perPage: perPage,
         }),
       })
       const json = await res.json()
@@ -46,8 +46,7 @@ export default function FoldersPage() {
   useEffect(() => {
     if (page) {
       setCurrentPage(Number(page))
-    }
-    else {
+    } else {
       setCurrentPage(1)
     }
   }, [page])
@@ -58,46 +57,52 @@ export default function FoldersPage() {
   }
 
   function updateCurrentPage(page: number) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', page.toString());
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('page', page.toString())
     router.push(pathname + '?' + params.toString(), undefined, { shallow: true })
     setCurrentPage(page)
   }
 
   return (
     <Layout title="Folders">
-      {meta &&
-        <Pagination
-          pageCount={meta.pageCount}
-          currentPage={currentPage}
-          setCurrentPage={updateCurrentPage}
-        />
-      }
-      {loading ? <FoldersLoading /> :
+      {meta && (
+        <div style={{ marginTop: 50, marginBottom: 30 }}>
+          <Pagination
+            pageCount={meta.pageCount}
+            currentPage={currentPage}
+            setCurrentPage={updateCurrentPage}
+          />
+        </div>
+      )}
+      {loading ? (
+        <FoldersLoading />
+      ) : (
         <>
           {folders.map((folder, index, list) => (
             <CoverCard
               key={folder.id}
-              cover={folder}
+              folder={folder}
               index={(currentPage && currentPage > 1 ? (currentPage - 1) * perPage : 0) + index + 1}
               total={meta ? meta.itemCount : 0}
             />
           ))}
         </>
-      }
-      {meta &&
-        <Pagination
-          pageCount={meta.pageCount}
-          currentPage={currentPage}
-          setCurrentPage={(page) => {
-            updateCurrentPage(page)
-            window.scrollTo({
-              top: 170,
-              behavior: 'auto'
-            })
-          }}
-        />
-      }
+      )}
+      {meta && (
+        <div style={{ marginTop: 30, marginBottom: 50 }}>
+          <Pagination
+            pageCount={meta.pageCount}
+            currentPage={currentPage}
+            setCurrentPage={(page) => {
+              updateCurrentPage(page)
+              window.scrollTo({
+                top: 170,
+                behavior: 'auto',
+              })
+            }}
+          />
+        </div>
+      )}
     </Layout>
   )
 }

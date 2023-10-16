@@ -79,7 +79,7 @@ body {
 .card {
   background-color: rgb(255, 255, 255);
   box-shadow: .3rem .3rem 1rem rgb(197, 197, 197);
-  box-shadow: 3px 3px 6px -2px #6185b7;
+  box-shadow: 0px 0px 9px -4px #8ea6c7;
   display: flex;
   border-radius: .5rem;
   padding: 1rem;
@@ -87,17 +87,18 @@ body {
 
 .card-container {
   font-size: 1.3rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2.5rem;
 }
 
 .card-top {
   margin-inline: 1rem;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .card-top h4 {
-  margin-bottom: .4rem;
+  margin-block: .7rem;
 }
 
 .left {
@@ -165,6 +166,13 @@ input,
 select {
   font-size: .9rem;
   font-family: 'Courier New', Courier, monospace;
+}
+
+input:disabled, 
+select:disabled {
+  background-color: inherit;
+  opacity: 1;
+  color: #333;
 }
 
 td,

@@ -3,6 +3,7 @@ import styles from "./header.module.css"
 import { signOut, useSession } from "next-auth/react"
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import stringToColor from '../functions/stringToColor'
 
 // The approach used in this component shows how to build a sign in and sign out
 // component that works on pages which support both client and server side
@@ -46,9 +47,9 @@ export default function Header() {
                   <>
                     {session.user.image && (
                       <span
-                        style={{ backgroundImage: `url('${session.user.image}')` }}
+                        style={{ backgroundColor: stringToColor(session.user.email) }}
                         className={styles.avatar}
-                      />
+                      >{session.user.email?.substring(0, 2).toUpperCase()}</span>
                     )}
                     <div className={styles.signedInText}>
                       <small>Signed in as</small>

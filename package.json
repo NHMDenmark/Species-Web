@@ -20,16 +20,22 @@
   "dependencies": {
     "@prisma/client": "^4.15.0",
     "formidable": "^1.2.2",
+    "js-sha256": "^0.10.1",
+    "lodash.isequal": "^4.5.0",
+    "luxon": "^3.4.3",
     "next": "13.2.4",
     "next-auth": "latest",
     "prisma": "^4.15.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^4.9.0"
+    "react-icons": "^4.9.0",
+    "react-modal": "^3.16.1"
   },
   "devDependencies": {
+    "@types/luxon": "^3.3.2",
     "@types/node": "^18.16.2",
     "@types/react": "^18.2.0",
+    "@types/react-modal": "^3.16.1",
     "typescript": "^5.0.4"
   }
 }

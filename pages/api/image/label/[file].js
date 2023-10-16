@@ -5,7 +5,7 @@ export default function handler(req, res) {
   const { file } = req.query;
 
   try {
-    const filePath = path.join(process.cwd(), 'image/label', file);
+    const filePath = path.join('./image/label', file);
 
     fs.readFile(filePath, (err, data) => {
       if (err) {
