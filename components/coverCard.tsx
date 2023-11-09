@@ -51,8 +51,8 @@ export default function CoverCard({
   const [modalOpen, setModalOpen] = useState<boolean>(false)
 
   let versionDiff = !isEqual(
-    { ...folderState.folder_versions[0], created_at: '', created_by: '' },
-    { ...updates, created_at: '', created_by: '' }
+    { ...folderState.folder_versions[0], created_at: '', created_by: '', gbif_match_json: '' },
+    { ...updates, created_at: '', created_by: '', gbif_match_json: '' }
   )
 
   let approvedDiff = approvedUpdate !== (folderState.approved_at ? true : false)
@@ -87,14 +87,15 @@ export default function CoverCard({
 
   async function gbifLookup() {
     setUpdates((state: any) => {
-      const highestClass = state.highest_classification
+      let highestClass = state.highest_classification
       const speciesName = state.species
 
       let lookupName = ''
       if (highestClass === 'subsp') {
-        lookupName = `${speciesName} subsp. ${state.subsp}`
+        highestClass = 'subspecies'
+        lookupName = `${speciesName} ${state.subsp}`
       } else if (highestClass === 'variety') {
-        lookupName = `${speciesName} var. ${state.variety}`
+        lookupName = `${speciesName} ${state.variety}`
       } else if (highestClass === 'species') {
         lookupName = speciesName
       } else if (highestClass === 'genus') {
@@ -102,7 +103,7 @@ export default function CoverCard({
       } else if (highestClass === 'family') {
         lookupName = state.family
       }
-      gbifNameLookup(lookupName, highestClass).then((res) => {
+      gbifNameLookup(lookupName.toLowerCase(), highestClass).then((res) => {
         setUpdates((state: any) => ({ ...state, gbif_match_json: JSON.stringify(res) }))
       })
       return { ...state }
@@ -149,7 +150,7 @@ export default function CoverCard({
         <td className={color}>
           <input
             disabled={folderState.approved_at ? true : false}
-            className={color}
+            className={folderState.approved_at ? '' : color}
             name={name}
             defaultValue={updates[name] ? updates[name] : ''}
             onBlur={(e) => {
@@ -282,9 +283,7 @@ export default function CoverCard({
             <tr>
               <th></th>
               <th className="table-title">Detected</th>
-              <th className="table-title" onClick={gbifLookup}>
-                GBIF
-              </th>
+              <th className="table-title">GBIF</th>
             </tr>
             <tr>
               <Classification name="family" />
