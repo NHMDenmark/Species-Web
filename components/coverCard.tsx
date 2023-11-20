@@ -287,23 +287,32 @@ export default function CoverCard({
                 GBIF{' '}
                 {JSON.parse(updates.gbif_match_json)?.taxonomicStatus &&
                   JSON.parse(updates.gbif_match_json)?.taxonomicStatus.toLowerCase() ===
-                    'synonym' && (
-                    <span
-                      style={{
-                        position: 'absolute',
-                        marginLeft: '20px',
-                        marginTop: '-5.5px',
-                        fontStyle: 'normal',
-                        backgroundColor: '#F3E218',
-                        color: 'black',
-                        padding: 3,
-                        paddingTop: 5,
-                        paddingInline: 10,
-                        borderRadius: '.5rem',
-                      }}
+                    'synonym' &&
+                  JSON.parse(updates.gbif_match_json)?.acceptedKey && (
+                    <a
+                      href={
+                        'https://www.gbif.org/species/' +
+                        JSON.parse(updates.gbif_match_json)?.acceptedKey?.toString()
+                      }
                     >
-                      SYNONYM
-                    </span>
+                      <span
+                        style={{
+                          cursor: 'pointer',
+                          position: 'absolute',
+                          marginLeft: '20px',
+                          marginTop: '-5.5px',
+                          fontStyle: 'normal',
+                          backgroundColor: '#F3E218',
+                          color: 'black',
+                          padding: 3,
+                          paddingTop: 5,
+                          paddingInline: 10,
+                          borderRadius: '.5rem',
+                        }}
+                      >
+                        SYNONYM
+                      </span>
+                    </a>
                   )}
               </th>
             </tr>
