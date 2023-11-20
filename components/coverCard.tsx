@@ -283,7 +283,29 @@ export default function CoverCard({
             <tr>
               <th></th>
               <th className="table-title">Detected</th>
-              <th className="table-title">GBIF</th>
+              <th className="table-title">
+                GBIF{' '}
+                {JSON.parse(updates.gbif_match_json)?.taxonomicStatus &&
+                  JSON.parse(updates.gbif_match_json)?.taxonomicStatus.toLowerCase() ===
+                    'synonym' && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        marginLeft: '20px',
+                        marginTop: '-5.5px',
+                        fontStyle: 'normal',
+                        backgroundColor: '#F3E218',
+                        color: 'black',
+                        padding: 3,
+                        paddingTop: 5,
+                        paddingInline: 10,
+                        borderRadius: '.5rem',
+                      }}
+                    >
+                      SYNONYM
+                    </span>
+                  )}
+              </th>
             </tr>
             <tr>
               <Classification name="family" />

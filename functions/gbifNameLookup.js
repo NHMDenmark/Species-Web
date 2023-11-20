@@ -5,7 +5,7 @@ export default async function gbifNameLookup(name, rank) {
   if (!(data && data.results && data.results.length > 0)) {
     return null
   } else {
-    const result = data.find((x) => x.kingdom.toLowerCase() === 'plantae')
+    const result = data.results.find((x) => x.kingdom.toLowerCase() === 'plantae')
     if (!result) return null
     if (['species', 'variety', 'subspecies'].includes(rank.toLowerCase())) {
       if (!(result.species ?? false) && result.canonicalName) {
@@ -38,6 +38,18 @@ export default async function gbifNameLookup(name, rank) {
       ) {
         result.subsp = result.canonicalName.split(' ')[2]
         result.species = result.canonicalName.split(' ').slice(0, 2).join(' ')
+      }
+      if (
+        result.taxonomicStatus &&
+        result.taxonomicStatus.toLowerCase() === 'synonym' &&
+        result.accepted &&
+        result.accepted.split(' ').length > 2
+      ) {
+        if (result.accepted.split(' ')[2] === 'var.') {
+          result.variety = result.accepted.split(' ')[3]
+        } else {
+          result.subsp = result.accepted.split(' ')[3]
+        }
       }
     }
     return result
