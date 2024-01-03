@@ -34,6 +34,7 @@ For development you need to run a database and export the DATABASE_URL environme
 
 ```
 npm i
+npx prisma migrate deploy
 npm run dev
 ```
 
