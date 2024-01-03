@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 
 export default function formatTime(time) {
-  let date = DateTime.fromISO(time)
+  let date = DateTime.fromISO(time).setLocale('en-GB')
   let dateDiff = date.day - DateTime.now().day
   let created_at_full = date.toLocaleString({
     month: 'long',
