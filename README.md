@@ -10,7 +10,7 @@ This full-stack web app is used together with [NHMASpeciesOCR](https://github.co
 
 The app uses authentication provided with [Auth0](https://auth0.com/docs). Setup an Auth0 application and save the Domain, Client ID and Client Secret.
 
-### 2. Configure your local environment
+### 2. Configure environment
 
 Copy the .env.local.example file in this directory to .env.local (which will be ignored by Git):
 
