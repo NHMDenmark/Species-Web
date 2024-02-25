@@ -12,8 +12,9 @@ const post = async (req, res) => {
   const form = new formidable.IncomingForm()
   form.parse(req, async function (err, fields, files) {
     try {
-      await saveFile('./image/label/', files.label)
-      await saveFile('./image/label_threshold/', files.label_threshold)
+      const session_start_string = fields.session_started_at.replace(' ', '_')
+      await saveFile(`./image/label/${session_start_string}/`, files.label)
+      await saveFile(`./image/label_threshold/${session_start_string}/`, files.label_threshold)
 
       const folder = await prisma.folder.create({
         data: {
@@ -21,6 +22,7 @@ const post = async (req, res) => {
           label: fields.image_label,
           ocr_read_json: fields.ocr_read_json,
           flagged: Boolean(fields.flagged),
+          session_started_at: new Date(fields.session_started_at),
         },
       })
 
@@ -37,6 +39,21 @@ const post = async (req, res) => {
           folder_id: folder.id,
         },
       })
+
+      if (fields.specimen && fields.specimen.length > 0) {
+        await prisma.specimen.createMany({
+          data: [
+            ...fields.specimen.map((specimen) => ({
+              guid: specimen.guid,
+              digitiser: specimen.digitiser,
+              date_asset_taken: specimen.date_asset_taken,
+              image_file: specimen.image_file,
+              checksum: specimen.checksum,
+              folder_id: folder.id,
+            })),
+          ],
+        })
+      }
     } catch (error) {
       console.log(error)
       return res.status(500).send(error)
@@ -46,9 +63,13 @@ const post = async (req, res) => {
   })
 }
 
-const saveFile = async (path, file) => {
+const saveFile = async (folder, file) => {
+  if (!fs.existsSync(folder)) {
+    fs.mkdirSync(folder, { recursive: true })
+  }
+
   const data = fs.readFileSync(file.path)
-  fs.writeFileSync(`${path}${file.name}`, data)
+  fs.writeFileSync(`${folder}${file.name}`, data)
   await fs.unlinkSync(file.path)
   return
 }

@@ -1,5 +1,6 @@
 import type { FolderVersion } from '@prisma/client'
-import { KeyboardEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { DateTime } from 'luxon'
 import {
   FaArrowRight,
   FaHistory,
@@ -49,6 +50,14 @@ export default function CoverCard({
   const [approvedUpdate, setApprovedUpdate] = useState<boolean>(folder.approved_at ? true : false)
   const [toggleBinary, setToggleBinary] = useState<boolean>(true)
   const [modalOpen, setModalOpen] = useState<boolean>(false)
+
+  const session_start = folder.session_started_at
+    ? DateTime.fromISO(folder.session_started_at?.toString())
+        .toUTC()
+        .toISO()
+        ?.replace('T', '_')
+        .split('.')[0]
+    : undefined
 
   let versionDiff = !isEqual(
     { ...folderState.folder_versions[0], created_at: '', created_by: '', gbif_match_json: '' },
@@ -226,10 +235,9 @@ export default function CoverCard({
       <div className="card">
         <div className="left">
           <img
-            src={
-              (toggleBinary ? 'api/image/label_threshold/' : '/api/image/label/') +
-              folderState.label
-            }
+            src={`/api/image/${toggleBinary ? 'label_threshold' : 'label'}/${
+              session_start ? session_start + '/' : ''
+            }${folderState.label}`}
             onClick={() => setToggleBinary(!toggleBinary)}
           />
           <div className="ocr">

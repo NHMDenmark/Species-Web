@@ -4,18 +4,20 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL") //"mysql://root:1234@local:3306/dassco-au"
+  url      = env("DATABASE_URL")
 }
 
 model Folder {
-  id              Int               @id @default(autoincrement())
-  image           String?           @db.MediumText
-  label           String?           @db.MediumText
-  ocr_read_json   String?           @db.Text
-  flagged         Boolean?
-  approved_at     DateTime?         @db.DateTime(0)
-  approved_by     String?           @db.MediumText
-  folder_versions FolderVersion[]
+  id                 Int             @id @default(autoincrement())
+  image              String?         @db.MediumText
+  label              String?         @db.MediumText
+  ocr_read_json      String?         @db.Text
+  flagged            Boolean?
+  approved_at        DateTime?       @db.DateTime(0)
+  approved_by        String?         @db.MediumText
+  session_started_at DateTime?       @db.DateTime(0)
+  folder_versions    FolderVersion[]
+  Specimen           Specimen[]
 
   @@map("folders")
 }
@@ -36,4 +38,17 @@ model FolderVersion {
   folder                 Folder    @relation(fields: [folder_id], references: [id])
 
   @@map("folder_versions")
+}
+
+model Specimen {
+  id               Int     @id @default(autoincrement())
+  guid             String? @db.VarChar(100)
+  digitiser        String? @db.VarChar(100)
+  date_asset_taken String? @db.VarChar(100)
+  image_file       String? @db.VarChar(100)
+  checksum         String? @db.VarChar(100)
+  folder_id        Int
+  folder           Folder  @relation(fields: [folder_id], references: [id])
+
+  @@map("specimen")
 }

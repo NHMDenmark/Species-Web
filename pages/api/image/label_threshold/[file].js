@@ -1,26 +1,26 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
 
 export default function handler(req, res) {
-  const { file } = req.query;
+  const { file } = req.query
 
   try {
-    const filePath = path.join('./image/label_threshold', file);
+    const filePath = path.join('./image/label_threshold', file)
 
     fs.readFile(filePath, (err, data) => {
       if (err) {
-        if(err.code === 'ENOENT') {
-          res.status(404).json({ error: 'File not found' });
-          return;
+        if (err.code === 'ENOENT') {
+          res.status(404).json({ error: 'File not found' })
+          return
         } else {
-        res.status(500).json({ error: 'Failed to read file' });
-        return;
+          res.status(500).json({ error: 'Failed to read file' })
+          return
         }
       } else {
-        res.status(200).send(data);
+        res.status(200).send(data)
       }
-    });
+    })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch file' });
+    res.status(500).json({ error: 'Failed to fetch file' })
   }
 }
