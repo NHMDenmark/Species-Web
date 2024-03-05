@@ -1,77 +1,62 @@
-import formidable from 'formidable'
-import fs from 'fs'
 import { prisma } from '../../prisma/prisma'
 
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: {
+      sizeLimit: '100mb',
+    },
   },
 }
 
 const post = async (req, res) => {
-  const form = new formidable.IncomingForm()
-  form.parse(req, async function (err, fields, files) {
-    try {
-      const session_start_string = fields.session_started_at.replace(' ', '_')
-      await saveFile(`./image/label/${session_start_string}/`, files.label)
-      await saveFile(`./image/label_threshold/${session_start_string}/`, files.label_threshold)
+  const data = req.body
+  console.log(data)
+  try {
+    const folder = await prisma.folder.create({
+      data: {
+        image: data.image_cover,
+        label: data.image_label,
+        ocr_read_json: data.ocr_read_json,
+        flagged: Boolean(data.flagged),
+        session_started_at: new Date(data.session_started_at),
+      },
+    })
 
-      const folder = await prisma.folder.create({
-        data: {
-          image: fields.image_cover,
-          label: fields.image_label,
-          ocr_read_json: fields.ocr_read_json,
-          flagged: Boolean(fields.flagged),
-          session_started_at: new Date(fields.session_started_at),
-        },
+    await prisma.folderVersion.create({
+      data: {
+        area: data.area,
+        family: data.family,
+        genus: data.genus,
+        species: data.species,
+        variety: data.variety,
+        subsp: data.subsp,
+        gbif_match_json: data.gbif_match_json,
+        highest_classification: data.highest_classification,
+        folder_id: folder.id,
+      },
+    })
+    console.log(data.specimen)
+    const specimen = data.specimen.map((specimen) => ({
+      guid: specimen.guid,
+      digitiser: specimen.digitiser,
+      date_asset_taken: specimen.date_asset_taken,
+      image_file: specimen.image_file,
+      checksum: specimen.checksum,
+      folder_id: folder.id,
+    }))
+    console.log(specimen)
+
+    if (data.specimen && data.specimen.length > 0) {
+      await prisma.specimen.createMany({
+        data: specimen,
       })
-
-      await prisma.folderVersion.create({
-        data: {
-          area: fields.area,
-          family: fields.family,
-          genus: fields.genus,
-          species: fields.species,
-          variety: fields.variety,
-          subsp: fields.subsp,
-          gbif_match_json: fields.gbif_match_json,
-          highest_classification: fields.highest_classification,
-          folder_id: folder.id,
-        },
-      })
-
-      if (fields.specimen && fields.specimen.length > 0) {
-        await prisma.specimen.createMany({
-          data: [
-            ...fields.specimen.map((specimen) => ({
-              guid: specimen.guid,
-              digitiser: specimen.digitiser,
-              date_asset_taken: specimen.date_asset_taken,
-              image_file: specimen.image_file,
-              checksum: specimen.checksum,
-              folder_id: folder.id,
-            })),
-          ],
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      return res.status(500).send(error)
     }
-
-    return res.status(201).send('')
-  })
-}
-
-const saveFile = async (folder, file) => {
-  if (!fs.existsSync(folder)) {
-    fs.mkdirSync(folder, { recursive: true })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).send(error)
   }
 
-  const data = fs.readFileSync(file.path)
-  fs.writeFileSync(`${folder}${file.name}`, data)
-  await fs.unlinkSync(file.path)
-  return
+  return res.status(201).send('')
 }
 
 export default (req, res) => {

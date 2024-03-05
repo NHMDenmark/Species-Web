@@ -4,7 +4,10 @@ import { withAuth } from 'next-auth/middleware'
 export default withAuth({
   callbacks: {
     authorized({ req, token }) {
-      if (req.nextUrl.pathname == '/api/folderupload') {
+      if (
+        req.nextUrl.pathname == '/api/folderupload' ||
+        req.nextUrl.pathname == '/api/labelupload'
+      ) {
         return req.headers.get('Authorization') == process.env.API_SECRET
       } else if (req.nextUrl.pathname == '/herbarium.jpeg') {
         return true
