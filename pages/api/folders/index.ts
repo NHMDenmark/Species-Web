@@ -7,15 +7,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return
   }
 
-  const currentPage = req.body.currentPage
-  const perPage = req.body.perPage
-  const totalCount = await prisma.folder.count()
-  const pageCount = Math.ceil(totalCount / perPage)
+  const { currentPage, perPage, from, to, sessions, onlyNonApproved } = req.body
+
+  const fromDate = from ? new Date(from) : undefined
+  const toDate = to ? new Date(to) : undefined
+  toDate?.setHours(23, 59, 59, 999)
+
+  const whereCondition = {
+    approved_at: onlyNonApproved ? null : undefined,
+    session_started_at:
+      sessions && sessions.length > 0
+        ? {
+            in: sessions.map((s: string) => new Date(s)),
+          }
+        : undefined,
+    Specimen:
+      fromDate && toDate
+        ? {
+            some: {
+              date_asset_taken: {
+                gte: fromDate.toISOString(),
+                lte: toDate.toISOString(),
+              },
+            },
+          }
+        : undefined,
+  }
+
   const folders = await prisma.folder.findMany({
     include: { folder_versions: { orderBy: { created_at: 'desc' } } },
     skip: currentPage > 1 ? (currentPage - 1) * perPage : undefined,
     take: perPage,
+    where: whereCondition,
   })
+  const totalCount = await prisma.folder.count({
+    where: whereCondition,
+  })
+  const pageCount = Math.ceil(totalCount / perPage)
   res.json({
     meta: {
       itemCount: totalCount,

@@ -177,7 +177,7 @@ select:disabled {
 
 td,
 th {
-  height: 3.3rem;
+  height: 3.6rem;
 }
 
 table,
@@ -187,7 +187,6 @@ tr {
 }
 
 .table-title {
-  padding-top: 2rem;
   text-align: center;
   width: 46%;
 }

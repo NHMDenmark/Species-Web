@@ -1,8 +1,8 @@
-import NavLink from "next/link"
-import styles from "./header.module.css"
-import { signOut, useSession } from "next-auth/react"
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import NavLink from 'next/link'
+import styles from './header.module.css'
+import { signOut, useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import stringToColor from '../functions/stringToColor'
 
 // The approach used in this component shows how to build a sign in and sign out
@@ -10,10 +10,10 @@ import stringToColor from '../functions/stringToColor'
 // rendering, and avoids any flash incorrect content on initial page load.
 export default function Header() {
   const { data: session, status } = useSession()
-  const [loading, setLoading] = useState<boolean>(status === "loading")
+  const [loading, setLoading] = useState<boolean>(status === 'loading')
 
   useEffect(() => {
-    const loaded = status !== "loading"
+    const loaded = status !== 'loading'
     if (loaded) {
       setTimeout(() => {
         setLoading(false)
@@ -21,7 +21,7 @@ export default function Header() {
     }
   }, [status])
 
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <header>
@@ -32,16 +32,32 @@ export default function Header() {
         <div className={styles.headerInner}>
           <nav>
             <div className={styles.navItems}>
-              <NavLink className={`${styles.navItem} ${router.pathname == "/" ? styles.active : ""}`} href="/">Status</NavLink>
-              <NavLink className={`${styles.navItem} ${router.pathname == "/folders" ? styles.active : ""}`} href="/folders">Folders</NavLink>
-              <NavLink className={`${styles.navItem} ${router.pathname == "/activity" ? styles.active : ""}`} href="/activity">Activity</NavLink>
+              <NavLink
+                className={`${styles.navItem} ${router.pathname == '/' ? styles.active : ''}`}
+                href="/"
+              >
+                Status
+              </NavLink>
+              <NavLink
+                className={`${styles.navItem} ${
+                  router.pathname == '/folders' ? styles.active : ''
+                }`}
+                href="/folders"
+              >
+                Folders
+              </NavLink>
+              <NavLink
+                className={`${styles.navItem} ${
+                  router.pathname == '/activity' ? styles.active : ''
+                }`}
+                href="/activity"
+              >
+                Activity
+              </NavLink>
             </div>
           </nav>
           <div className={styles.signedInStatus}>
-            <div
-              className={`nojs-show ${loading ? styles.loading : styles.loaded}`}
-            >
-
+            <div className={`nojs-show ${loading ? styles.loading : styles.loaded}`}>
               <div className={styles.userBox}>
                 {session?.user && (
                   <>
@@ -49,7 +65,9 @@ export default function Header() {
                       <span
                         style={{ backgroundColor: stringToColor(session.user.email) }}
                         className={styles.avatar}
-                      >{session.user.email?.substring(0, 2).toUpperCase()}</span>
+                      >
+                        {session.user.email?.substring(0, 2).toUpperCase()}
+                      </span>
                     )}
                     <div className={styles.signedInText}>
                       <small>Signed in as</small>

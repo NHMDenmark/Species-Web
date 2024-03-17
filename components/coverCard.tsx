@@ -290,8 +290,8 @@ export default function CoverCard({
             </tr>
             <tr>
               <th></th>
-              <th className="table-title">Detected</th>
-              <th className="table-title">
+              <th className="table-title pt-12 pb-4">Detected</th>
+              <th className="table-title pt-12 pb-4">
                 GBIF{' '}
                 {JSON.parse(updates.gbif_match_json)?.taxonomicStatus &&
                   JSON.parse(updates.gbif_match_json)?.taxonomicStatus.toLowerCase() ===

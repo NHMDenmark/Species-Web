@@ -18,24 +18,43 @@
     "Lluis Agusti <hi@llu.lu>"
   ],
   "dependencies": {
+    "@hookform/resolvers": "^3.3.4",
     "@prisma/client": "^4.15.0",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-popover": "^1.0.7",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-tooltip": "^1.0.7",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "cmdk": "^1.0.0",
+    "date-fns": "^3.5.0",
     "formidable": "^1.2.2",
     "js-sha256": "^0.10.1",
     "lodash.isequal": "^4.5.0",
+    "lucide-react": "^0.358.0",
     "luxon": "^3.4.3",
     "next": "13.2.4",
     "next-auth": "latest",
     "prisma": "^4.15.0",
     "react": "^18.2.0",
+    "react-day-picker": "^8.10.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.1",
     "react-icons": "^4.9.0",
-    "react-modal": "^3.16.1"
+    "react-modal": "^3.16.1",
+    "react-select": "^5.8.0",
+    "tailwind-merge": "^2.2.2",
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/luxon": "^3.3.2",
     "@types/node": "^18.16.2",
     "@types/react": "^18.2.0",
     "@types/react-modal": "^3.16.1",
+    "tailwindcss": "^3.4.1",
     "typescript": "^5.0.4"
   }
 }

@@ -80,7 +80,7 @@
   color: #d24242;
   text-decoration: none;
   font-size: 18px;
-  padding: .6rem .9rem;
+  padding: .4rem .9rem;
   margin: .15rem;
   transition: all ease .25s;
 }
@@ -99,7 +99,7 @@
 }
 
 .navItem {
-  padding: .6rem .9rem;
+  padding: .4rem .9rem;
   margin-right: 1.4rem;
   margin-bottom: .8rem;
   color: rgb(76, 76, 76);
