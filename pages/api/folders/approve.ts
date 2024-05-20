@@ -16,10 +16,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     where: {
       id: req.body.folder_id,
     },
-    data: {
-      approved_at: time,
-      approved_by: author,
-    },
+    data: req.body.approve
+      ? {
+          approved_at: time,
+          approved_by: author,
+        }
+      : {
+          approved_at: null,
+          approved_by: null,
+        },
   })
   res.json({
     approved_at: time,

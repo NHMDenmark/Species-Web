@@ -1,19 +1,21 @@
 import type { FolderVersion } from '@prisma/client'
-import { useEffect, useState } from 'react'
 import { DateTime } from 'luxon'
+import { useSession } from 'next-auth/react'
+import { useEffect, useState } from 'react'
 import {
   FaArrowRight,
   FaHistory,
   FaRegCheckCircle,
   FaRegSave,
   FaRegTimesCircle,
+  FaUndo,
 } from 'react-icons/fa'
-import { FolderWithVersions } from '../prisma/prisma'
-import styles from './coverCard.module.css'
 import Modal from 'react-modal'
 import formatTime from '../functions/formatTime'
-import stringToColor from '../functions/stringToColor'
 import gbifNameLookup from '../functions/gbifNameLookup'
+import stringToColor from '../functions/stringToColor'
+import { FolderWithVersions } from '../prisma/prisma'
+import styles from './coverCard.module.css'
 
 const isEqual = require('lodash.isequal')
 
@@ -42,6 +44,7 @@ export default function CoverCard({
   index: number
   total: number
 }) {
+  const { data: session } = useSession()
   const [areaCorrect, setAreaCorrect] = useState<boolean>(
     folder.folder_versions[0].area ? areaList.includes(folder.folder_versions[0].area) : false
   )
@@ -66,6 +69,9 @@ export default function CoverCard({
 
   let approvedDiff = approvedUpdate !== (folderState.approved_at ? true : false)
 
+  console.log('versionDiff', versionDiff)
+  console.log('approvedDiff', approvedDiff)
+
   useEffect(() => {
     document.body.style.overflow = modalOpen ? 'hidden' : 'unset'
   }, [modalOpen])
@@ -82,7 +88,7 @@ export default function CoverCard({
     })
   }
 
-  async function approveFolder() {
+  async function approveFolder(approve: boolean = true) {
     return await fetch('/api/folders/approve', {
       method: 'POST',
       headers: {
@@ -90,6 +96,7 @@ export default function CoverCard({
       },
       body: JSON.stringify({
         folder_id: folderState.id,
+        approve: approve,
       }),
     })
   }
@@ -210,6 +217,22 @@ export default function CoverCard({
               {folderState.approved_by}
             </span>{' '}
             {formatTime(folderState.approved_at)}
+            {folderState.approved_by === session?.user?.email && (
+              <button
+                onClick={() => {
+                  approveFolder(false).then(() => {
+                    setApprovedUpdate(false)
+                    setFolderState((state) => ({
+                      ...state,
+                      approved_at: null,
+                      approved_by: null,
+                    }))
+                  })
+                }}
+              >
+                <FaUndo style={{ display: 'inline', marginLeft: 14, color: '#d93535' }} />
+              </button>
+            )}
           </div>
         ) : (
           <button
