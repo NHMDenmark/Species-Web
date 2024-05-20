@@ -143,3 +143,34 @@
 .version td, .version th {
     height: 2.2rem;
 }
+
+.tooltipwrap {
+    visibility: visible;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+  
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    border-radius: 4px;
+    font-size: large;
+    padding: 5px 10px;
+
+    right: 0px;
+    top: -42px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 10;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltipwrap:hover .tooltiptext {
+    visibility: visible;
+}

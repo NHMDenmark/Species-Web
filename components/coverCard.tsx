@@ -321,12 +321,14 @@ export default function CoverCard({
                     'synonym' &&
                   JSON.parse(updates.gbif_match_json)?.acceptedKey && (
                     <a
+                      className={styles.tooltipwrap}
                       href={
                         'https://www.gbif.org/species/' +
                         JSON.parse(updates.gbif_match_json)?.acceptedKey?.toString()
                       }
                     >
                       <span
+                        //className={styles.tooltipwrap}
                         style={{
                           cursor: 'pointer',
                           position: 'absolute',
@@ -343,6 +345,16 @@ export default function CoverCard({
                       >
                         SYNONYM
                       </span>
+                      <div className={styles.tooltip}>
+                        <div className={styles.tooltiptext}>
+                          <div style={{ whiteSpace: 'nowrap', textAlign: 'left' }}>
+                            Match: {JSON.parse(updates.gbif_match_json)?.scientificName}
+                          </div>
+                          <div style={{ whiteSpace: 'nowrap', textAlign: 'left' }}>
+                            Accepted: {JSON.parse(updates.gbif_match_json)?.accepted}
+                          </div>
+                        </div>
+                      </div>
                     </a>
                   )}
               </th>
