@@ -1,6 +1,6 @@
-# NHMASpeciesWeb
+# Species-Web
 
-This full-stack web app is used together with [NHMASpeciesOCR](https://github.com/Aksel147/NHMASpeciesOCR) for storing the text read from specimen cover labels. The app uses a database to store the text and any match from GBIF that may have been found, along with a history of corrections to the text read. For each cover an image in both color and black/white of the label is stored on disk for easy display in the app.
+This full-stack web app is used together with [Species-OCR](https://github.com/NHMDenmark/Species-OCR) for storing the text read from specimen cover labels. The app uses a database to store the text and any match from GBIF that may have been found, along with a history of corrections to the text read. For each cover an image in both color and black/white of the label is stored on disk for easy display in the app.
 
 ![screenshot](./docs/screenshot.png)
 
@@ -20,7 +20,7 @@ cp .env.local.example .env.local
 
 Input the values saved in step 1.
 
-Generate values for the secrets. The API_SECRET is the token used by [NHMASpeciesOCR](https://github.com/Aksel147/NHMASpeciesOCR) for authorizing with the app when uploading data.
+Generate values for the secrets. The API_SECRET is the token used by [Species-OCR](https://github.com/NHMDenmark/Species-OCR) for authorizing with the app when uploading data.
 
 ### 3. Start the application
 
