@@ -317,8 +317,9 @@ export default function CoverCard({
               <th className="table-title pt-12 pb-4">
                 GBIF{' '}
                 {JSON.parse(updates.gbif_match_json)?.taxonomicStatus &&
-                  JSON.parse(updates.gbif_match_json)?.taxonomicStatus.toLowerCase() ===
-                    'synonym' &&
+                  ['synonym', 'heterotypic_synonym'].includes(
+                    JSON.parse(updates.gbif_match_json)?.taxonomicStatus.toLowerCase()
+                  ) &&
                   JSON.parse(updates.gbif_match_json)?.acceptedKey && (
                     <a
                       className={styles.tooltipwrap}
