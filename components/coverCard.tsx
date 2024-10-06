@@ -1,7 +1,7 @@
 import type { FolderVersion } from '@prisma/client'
 import { DateTime } from 'luxon'
 import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import {
   FaArrowRight,
   FaHistory,
@@ -53,6 +53,14 @@ export default function CoverCard({
   const [approvedUpdate, setApprovedUpdate] = useState<boolean>(folder.approved_at ? true : false)
   const [toggleBinary, setToggleBinary] = useState<boolean>(true)
   const [modalOpen, setModalOpen] = useState<boolean>(false)
+  const [gbifResults, setGbifResults] = useState<any[]>([])
+  const selectRef = useRef<HTMLSelectElement>(null)
+  const [showTooltip, setShowTooltip] = useState(false)
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
+
+  console.log('gbifResults', gbifResults)
+  console.log('updates', updates)
+  console.log('folderState', folderState)
 
   const session_start = folder.session_started_at
     ? DateTime.fromISO(folder.session_started_at?.toString())
@@ -63,8 +71,8 @@ export default function CoverCard({
     : undefined
 
   let versionDiff = !isEqual(
-    { ...folderState.folder_versions[0], created_at: '', created_by: '', gbif_match_json: '' },
-    { ...updates, created_at: '', created_by: '', gbif_match_json: '' }
+    { ...folderState.folder_versions[0], created_at: '', created_by: '', gbif_match_json: '', scientificName: JSON.parse(folderState.folder_versions[0].gbif_match_json || '{}')?.scientificName },
+    { ...updates, created_at: '', created_by: '', gbif_match_json: '', scientificName: JSON.parse(updates.gbif_match_json || '{}')?.scientificName }
   )
 
   let approvedDiff = approvedUpdate !== (folderState.approved_at ? true : false)
@@ -75,6 +83,10 @@ export default function CoverCard({
   useEffect(() => {
     document.body.style.overflow = modalOpen ? 'hidden' : 'unset'
   }, [modalOpen])
+
+  useEffect(() => {
+    gbifLookup();
+  }, [])
 
   async function updateVersion() {
     return await fetch('/api/folder_versions', {
@@ -120,7 +132,10 @@ export default function CoverCard({
         lookupName = state.family
       }
       gbifNameLookup(lookupName.toLowerCase(), highestClass).then((res) => {
-        setUpdates((state: any) => ({ ...state, gbif_match_json: JSON.stringify(res) }))
+        setGbifResults(res)
+        if (res.length > 0) {
+          setUpdates((state: any) => ({ ...state, gbif_match_json: JSON.stringify(res[0]) }))
+        }
       })
       return { ...state }
     })
@@ -315,49 +330,131 @@ export default function CoverCard({
               <th></th>
               <th className="table-title pt-12 pb-4">Detected</th>
               <th className="table-title pt-12 pb-4">
-                GBIF{' '}
-                {JSON.parse(updates.gbif_match_json)?.taxonomicStatus &&
-                  ['synonym', 'heterotypic_synonym'].includes(
-                    JSON.parse(updates.gbif_match_json)?.taxonomicStatus.toLowerCase()
-                  ) &&
-                  JSON.parse(updates.gbif_match_json)?.acceptedKey && (
-                    <a
-                      className={styles.tooltipwrap}
-                      href={
-                        'https://www.gbif.org/species/' +
-                        JSON.parse(updates.gbif_match_json)?.acceptedKey?.toString()
-                      }
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <select
+                      ref={selectRef}
+                      value={updates.gbif_match_json}
+                      onChange={(e) => {
+                        setUpdates((state: any) => ({ ...state, gbif_match_json: e.target.value }))
+                      }}
+                      onMouseEnter={() => {
+                        if (selectRef.current) {
+                          const rect = selectRef.current.getBoundingClientRect()
+                          setTooltipPosition({ top: rect.bottom, left: rect.left })
+                        }
+                        setShowTooltip(true)
+                      }}
+                      onMouseLeave={() => setShowTooltip(false)}
+                      style={{ marginRight: '0px', width: '100px', marginLeft: '5px', paddingRight: '25px' }}
                     >
-                      <span
-                        //className={styles.tooltipwrap}
+                      {gbifResults.map((result, index) => (
+                        <option key={index} value={JSON.stringify(result)}>
+                          {result.scientificName || `Result ${index + 1}`}
+                        </option>
+                      ))}
+                    </select>
+                    <span style={{
+                      position: 'absolute',
+                      right: '15px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      backgroundColor: '#007bff',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      pointerEvents: 'none'
+                    }}>
+                      {gbifResults.length}
+                    </span>
+                    {showTooltip && gbifResults.length > 0 && (
+                      <div
                         style={{
-                          cursor: 'pointer',
-                          position: 'absolute',
-                          marginLeft: '20px',
-                          marginTop: '-5.5px',
-                          fontStyle: 'normal',
-                          backgroundColor: '#F3E218',
-                          color: 'black',
-                          padding: 3,
-                          paddingTop: 5,
-                          paddingInline: 10,
-                          borderRadius: '.5rem',
+                          position: 'fixed',
+                          top: tooltipPosition.top + 'px',
+                          left: tooltipPosition.left + 'px',
+                          backgroundColor: 'white',
+                          border: '1px solid #ccc',
+                          borderRadius: '4px',
+                          padding: '5px',
+                          zIndex: 1000,
+                          maxHeight: '200px',
+                          overflowY: 'auto',
+                          boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                          textAlign: 'left',
                         }}
                       >
-                        SYNONYM
-                      </span>
-                      <div className={styles.tooltip}>
-                        <div className={styles.tooltiptext}>
-                          <div style={{ whiteSpace: 'nowrap', textAlign: 'left' }}>
-                            Match: {JSON.parse(updates.gbif_match_json)?.scientificName}
+                        {gbifResults.map((result, index) => (
+                          <div
+                            key={index}
+                            style={{
+                              padding: '2px 5px',
+                              backgroundColor: JSON.stringify(result) === updates.gbif_match_json ? '#e6f3ff' : 'transparent',
+                            }}
+                          >
+                            {result.scientificName || `Result ${index + 1}`}
                           </div>
-                          <div style={{ whiteSpace: 'nowrap', textAlign: 'left' }}>
-                            Accepted: {JSON.parse(updates.gbif_match_json)?.accepted}
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <a
+                    className="table-title"
+                    href={`https://www.gbif.org/species/${JSON.parse(updates.gbif_match_json)?.key}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ paddingRight: '80px', textDecoration: 'none', color: 'inherit' }}
+                  >
+                    GBIF
+                  </a>
+                  {JSON.parse(updates.gbif_match_json)?.taxonomicStatus &&
+                    ['synonym', 'heterotypic_synonym'].includes(
+                      JSON.parse(updates.gbif_match_json)?.taxonomicStatus.toLowerCase()
+                    ) &&
+                    JSON.parse(updates.gbif_match_json)?.acceptedKey && (
+                      <a
+                        className={styles.tooltipwrap}
+                        href={
+                          'https://www.gbif.org/species/' +
+                          JSON.parse(updates.gbif_match_json)?.acceptedKey?.toString()
+                        }
+                      >
+                        <span
+                          //className={styles.tooltipwrap}
+                          style={{
+                            cursor: 'pointer',
+                            position: 'absolute',
+                            marginLeft: '-76px',
+                            marginTop: '-5.5px',
+                            fontStyle: 'normal',
+                            backgroundColor: '#F3E218',
+                            color: 'black',
+                            padding: 3,
+                            paddingTop: 5,
+                            paddingInline: 10,
+                            borderRadius: '.5rem',
+                          }}
+                        >
+                          SYNONYM
+                        </span>
+                        <div className={styles.tooltip}>
+                          <div className={styles.tooltiptext}>
+                            <div style={{ whiteSpace: 'nowrap', textAlign: 'left' }}>
+                              Match: {JSON.parse(updates.gbif_match_json)?.scientificName}
+                            </div>
+                            <div style={{ whiteSpace: 'nowrap', textAlign: 'left' }}>
+                              Accepted: {JSON.parse(updates.gbif_match_json)?.accepted}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </a>
-                  )}
+                      </a>
+                    )}
+                </div>
               </th>
             </tr>
             <tr>
