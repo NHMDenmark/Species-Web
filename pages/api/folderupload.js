@@ -37,6 +37,7 @@ const post = async (req, res) => {
     })
     console.log(data.specimen)
     const specimen = data.specimen.map((specimen) => ({
+      barcode: specimen.barcode,
       guid: specimen.guid,
       digitiser: specimen.digitiser,
       date_asset_taken: specimen.date_asset_taken,

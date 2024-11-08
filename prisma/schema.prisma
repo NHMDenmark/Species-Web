@@ -42,6 +42,7 @@ model FolderVersion {
 
 model Specimen {
   id               Int     @id @default(autoincrement())
+  barcode          String? @db.VarChar(100)
   guid             String? @db.VarChar(100)
   digitiser        String? @db.VarChar(100)
   date_asset_taken String? @db.VarChar(100)
