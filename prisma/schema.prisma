@@ -13,8 +13,8 @@ model Folder {
   label              String?         @db.MediumText
   ocr_read_json      String?         @db.Text
   flagged            Boolean?
-  approved_at        DateTime?       @db.DateTime(0)
   approved_by        String?         @db.MediumText
+  approved_at        DateTime?       @db.DateTime(0)
   session_started_at DateTime?       @db.DateTime(0)
   folder_versions    FolderVersion[]
   Specimen           Specimen[]
@@ -33,23 +33,25 @@ model FolderVersion {
   gbif_match_json        String?   @db.Text
   highest_classification String?   @db.VarChar(100)
   created_at             DateTime? @default(now()) @db.DateTime(0)
-  created_by             String?   @db.VarChar(100)
   folder_id              Int
+  created_by             String?   @db.VarChar(100)
   folder                 Folder    @relation(fields: [folder_id], references: [id])
 
+  @@index([folder_id], map: "folder_versions_folder_id_fkey")
   @@map("folder_versions")
 }
 
 model Specimen {
   id               Int     @id @default(autoincrement())
-  barcode          String? @db.VarChar(100)
   guid             String? @db.VarChar(100)
   digitiser        String? @db.VarChar(100)
   date_asset_taken String? @db.VarChar(100)
   image_file       String? @db.VarChar(100)
   checksum         String? @db.VarChar(100)
   folder_id        Int
+  barcode          String? @db.VarChar(100)
   folder           Folder  @relation(fields: [folder_id], references: [id])
 
+  @@index([folder_id], map: "specimen_folder_id_fkey")
   @@map("specimen")
 }
