@@ -16,6 +16,7 @@ services:
   # Dockerfile Service
   web:
     build:
+      context: .
       dockerfile: Dockerfile
     container_name: nhmaspeciesweb
     environment:
