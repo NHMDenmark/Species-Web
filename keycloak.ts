@@ -1,9 +1,9 @@
 import KeyCloak from 'keycloak-js';
 
 const keycloak = new KeyCloak({
-    url: "https://integration.bhsi.xyz",
-    realm: "dassco",
-    clientId: "test-species",
+    url: process.env.NEXT_PUBLIC_KC_URL,
+    realm: process.env.NEXT_PUBLIC_KC_REALM,
+    clientId: process.env.NEXT_PUBLIC_KC_CLIENT,
     });
 
 export default keycloak;

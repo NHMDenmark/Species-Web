@@ -1,25 +1,34 @@
 import NavLink from 'next/link'
 import styles from './header.module.css'
-import { signOut, useSession } from 'next-auth/react'
+// import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import stringToColor from '../functions/stringToColor'
+import keycloak from '../keycloak'
 
 // The approach used in this component shows how to build a sign in and sign out
 // component that works on pages which support both client and server side
 // rendering, and avoids any flash incorrect content on initial page load.
 export default function Header() {
-  const { data: session, status } = useSession()
-  const [loading, setLoading] = useState<boolean>(status === 'loading')
+  //const { data: session, status } = useSession()
+  // const [loading, setLoading] = useState<boolean>(status === 'loading')
+  const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
+    if (keycloak.authenticated && keycloak.tokenParsed) {
+      setUser(keycloak.tokenParsed)
+    }
+  }, [])
+
+
+  /*useEffect(() => {
     const loaded = status !== 'loading'
     if (loaded) {
       setTimeout(() => {
         setLoading(false)
       }, 500)
     }
-  }, [status])
+  }, [status])*/
 
   const router = useRouter()
 
@@ -57,31 +66,35 @@ export default function Header() {
             </div>
           </nav>
           <div className={styles.signedInStatus}>
-            <div className={`nojs-show ${loading ? styles.loading : styles.loaded}`}>
+            
               <div className={styles.userBox}>
-                {session?.user && (
+                {user && (
                   <>
-                    {session.user.image && (
-                      <span
-                        style={{ backgroundColor: stringToColor(session.user.email) }}
-                        className={styles.avatar}
-                      >
-                        {session.user.email?.substring(0, 2).toUpperCase()}
-                      </span>
-                    )}
+                    <span
+                      style={{ backgroundColor: stringToColor(user.email || user.preferred_username) }}
+                      className={styles.avatar}
+                    >
+                      {(user.email || user.preferred_username || 'U')
+                        .substring(0, 2)
+                        .toUpperCase()}
+                    </span>
+
                     <div className={styles.signedInText}>
                       <small>Signed in as</small>
                       <br />
-                      <strong>{session.user.email ?? session.user.name}</strong>
+                      <strong>{user.email || user.preferred_username || user.name}</strong>
                     </div>
                   </>
                 )}
                 <a
-                  href="/api/auth/signout"
+                  href="#"
                   className={styles.buttonPrimary}
                   onClick={(e) => {
                     e.preventDefault()
-                    signOut()
+
+                    keycloak.logout({
+                      redirectUri: process.env.NEXT_PUBLIC_LOGOUT_REDIRECT,
+                    })
                   }}
                 >
                   Sign&nbsp;out
@@ -90,7 +103,7 @@ export default function Header() {
             </div>
           </div>
         </div>
-      </div>
+      
     </header>
   )
 }
