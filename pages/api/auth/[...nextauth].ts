@@ -1,4 +1,35 @@
 import NextAuth, { NextAuthOptions } from "next-auth"
+import { OAuthConfig } from "next-auth/providers"
+
+export const authOptions: NextAuthOptions = {
+  providers: [
+    {
+      id: "keycloak",
+      name: "Keycloak",
+      type: "oauth",
+      wellKnown: "https://integration.bhsi.xyz/realms/dassco/.well-known/openid-configuration",
+      clientId: process.env.KEYCLOAK_CLIENT_ID,
+      profile(profile) {
+        // Map Keycloak profile to NextAuth user object
+        return {
+          id: profile.sub,
+          name: profile.preferred_username || profile.name,
+          email: profile.email,
+          image: profile.picture,
+        }
+      }
+    } as OAuthConfig<any>, // cast ensures TypeScript is happy
+  ],
+
+  pages: {
+    signIn: "/auth/signin"
+  },
+
+}
+
+export default NextAuth(authOptions)
+
+/*import NextAuth, { NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import FacebookProvider from "next-auth/providers/facebook"
 import GithubProvider from "next-auth/providers/github"
@@ -22,3 +53,4 @@ export const authOptions: NextAuthOptions = {
 }
 
 export default NextAuth(authOptions)
+*/
