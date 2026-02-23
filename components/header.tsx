@@ -3,7 +3,8 @@ import styles from './header.module.css'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import stringToColor from '../functions/stringToColor'
-import keycloak from '../keycloak'
+import keycloak from '../authentication/keycloak'
+import { happiness } from '../happiness'
 
 // The approach used in this component shows how to build a sign in and sign out
 // component that works on pages which support both client and server side
@@ -65,7 +66,7 @@ export default function Header() {
             </div>
           </nav>
           <div className={styles.signedInStatus}>
-            
+            <div>
               <div className={styles.userBox}>
                 {user && (
                   <>
@@ -82,7 +83,7 @@ export default function Header() {
                       <small>Signed in as</small>
                       <br />
                       <strong>{user.preferred_username || user.name || user.email}</strong>
-                    </div>  
+                    </div>
                   </>
                 )}
                 <a
@@ -98,6 +99,9 @@ export default function Header() {
                 >
                   Sign&nbsp;out
                 </a>
+              </div>
+              <br/>
+              <p>&emsp;{happiness}</p>
               </div>
             </div>
           </div>

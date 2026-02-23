@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../../prisma/prisma'
-import { verifyToken } from '../../../verify-token'
+import { verifyToken } from '../../../authentication/verify-token'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   
   const author = payload.name || payload.email
   const time = new Date()
-
+  
   await prisma.folder.update({
     where: { id: req.body.folder_id 
     },

@@ -18,8 +18,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../@/components/ui/tooltip'
+import { useAuth } from '../authentication/use-auth'
 
 export default function FoldersPage() {
+
+  const { authenticated, keycloak } = useAuth()
+  
+    if (!authenticated) {
+      keycloak.login()
+      return null
+    }
+
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -39,20 +48,35 @@ export default function FoldersPage() {
 
   const [sessions, setSessions] = useState<Session[]>()
   const [viewApproved, setViewApproved] = useState<boolean>(false)
-  const [selectedSessions, setSelectedSessions] = useState<Session[]>()
+  const [selectedSessions, setSelectedSessions] = useState<Session[]>()  
 
   useEffect(() => {
     const fetchData = async () => {
+      try {
       const res = await fetch('/api/sessions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({}),
       })
+
+      if (!res.ok) {
+        console.error('Failed to fetch sessions:', res.status, res.statusText)
+        return
+      }
+
       const json = await res.json()
-      setSessions(json.result.reverse())
+      
+      if (Array.isArray(json.result)) {
+        setSessions(json.result.reverse())
+      } else {
+        console.warn('No sessions returned from API:', json)
+        setSessions([])
+      }
+    } catch (err) {
+      console.error('Error fetching sessions:', err)
+      setSessions([])
     }
+  }
     setLoading(true)
     fetchData().then(() => {
       setLoading(false)
@@ -138,33 +162,6 @@ export default function FoldersPage() {
     params.set('page', page.toString())
     router.push(pathname + '?' + params.toString(), undefined, { shallow: true })
   }
-
-  /* const defaultDateSelection = date?.from && date?.to ? date.from : undefined
-
-  const defaultDate = new Date()
-  defaultDate.setMonth(defaultDate.getMonth() - 2)
-
-  const onDateSelect = (date: DateRange | undefined) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('from', date?.from ? date.from.toDateString() : '')
-    params.set('to', date?.to ? date.to.toDateString() : '')
-    router.push(pathname + '?' + params.toString(), undefined, { shallow: true })
-    setDate(date)
-  }
-
-  const onOpenChange = (open: boolean) => {
-    if (!open) {
-      let newSearchDate = undefined
-      if (date?.from && date?.to) {
-        newSearchDate = date
-      }
-
-      if (!isEqual(searchDate, newSearchDate)) {
-        setCurrentPage(1)
-        setSearchDate(newSearchDate)
-      }
-    }
-  } */
 
   return (
     <Layout title="Folders">
