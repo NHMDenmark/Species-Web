@@ -5,7 +5,7 @@ import './styles.css'
 import type { AppProps } from 'next/app'
 import type { Session } from 'next-auth'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import keycloak from '../keycloak'
 
 export default function App({
@@ -14,8 +14,12 @@ export default function App({
 }: AppProps<{ session: Session }>) {
 
   const [kcReady, setKcReady] = useState(false)
+  const initialized = useRef(false)
 
   useEffect(() => {
+    if (initialized.current) return
+    initialized.current = true
+
     keycloak
       .init({
         onLoad: 'login-required',   // force login if not logged in

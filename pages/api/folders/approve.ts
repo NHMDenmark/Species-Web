@@ -1,20 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getServerSession } from 'next-auth'
 import { prisma } from '../../../prisma/prisma'
-import { authOptions } from '../auth/[...nextauth]'
+import { verifyToken } from '../../../verify-token'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
-    res.status(405).send({ message: 'Only POST requests allowed' })
-    return
+    return res.status(405).send({ message: 'Only POST requests allowed' })
   }
-  const session = await getServerSession(req, res, authOptions)
 
+  const authHeader = req.headers.authorization
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Missing token' })
+  }
+
+  const token = authHeader.replace('Bearer ', '')
+
+  let payload
+  try {
+    payload = await verifyToken(token)
+  } catch {
+    return res.status(401).json({ message: 'Invalid token' })
+  }
+  
+  const author = payload.name || payload.email
   const time = new Date()
-  const author = session?.user?.email
+
   await prisma.folder.update({
-    where: {
-      id: req.body.folder_id,
+    where: { id: req.body.folder_id 
     },
     data: req.body.approve
       ? {
@@ -26,6 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           approved_by: null,
         },
   })
+
   res.json({
     approved_at: time,
     approved_by: author,

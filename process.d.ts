@@ -10,8 +10,6 @@ declare namespace NodeJS {
     TWITTER_SECRET: string
     GOOGLE_ID: string
     GOOGLE_SECRET: string
-    AUTH0_ID: string
-    AUTH0_SECRET: string
     NEXT_PUBLIC_KC_URL: string
     NEXT_PUBLIC_KC_REALM: string
     NEXT_PUBLIC_KC_CLIENT: string

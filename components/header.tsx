@@ -1,6 +1,5 @@
 import NavLink from 'next/link'
 import styles from './header.module.css'
-// import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import stringToColor from '../functions/stringToColor'
@@ -10,25 +9,25 @@ import keycloak from '../keycloak'
 // component that works on pages which support both client and server side
 // rendering, and avoids any flash incorrect content on initial page load.
 export default function Header() {
-  //const { data: session, status } = useSession()
-  // const [loading, setLoading] = useState<boolean>(status === 'loading')
+  
+  const [loading, setLoading] = useState<boolean>(status === 'loading')
   const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
     if (keycloak.authenticated && keycloak.tokenParsed) {
       setUser(keycloak.tokenParsed)
+      console.log('User info loaded from token:', keycloak.tokenParsed)
     }
   }, [])
 
-
-  /*useEffect(() => {
+  useEffect(() => {
     const loaded = status !== 'loading'
     if (loaded) {
       setTimeout(() => {
         setLoading(false)
       }, 500)
     }
-  }, [status])*/
+  }, [status])
 
   const router = useRouter()
 
@@ -82,8 +81,8 @@ export default function Header() {
                     <div className={styles.signedInText}>
                       <small>Signed in as</small>
                       <br />
-                      <strong>{user.email || user.preferred_username || user.name}</strong>
-                    </div>
+                      <strong>{user.preferred_username || user.name || user.email}</strong>
+                    </div>  
                   </>
                 )}
                 <a
