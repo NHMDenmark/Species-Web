@@ -5,7 +5,6 @@ import { AuthContext } from './auth-context'
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authenticated, setAuthenticated] = useState(false)
   const [ready, setReady] = useState(false)
-
   const initialized = useRef(false)
 
   useEffect(() => {
@@ -18,7 +17,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         pkceMethod: 'S256',
         checkLoginIframe: false,
       })
-      .then((auth) => {
+      .then((auth: boolean) => {
         setAuthenticated(auth)
         setReady(true)
 
@@ -33,7 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
   }, [])
 
-  if (!ready) return <div>Loading authentication…</div>
+  if (!ready) return <div>Click back to login...</div>
 
   return (
     <AuthContext.Provider

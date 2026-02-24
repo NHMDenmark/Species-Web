@@ -45,6 +45,8 @@ source ~/.bashrc
 nvm install 18.20
 nvm use 18.20
 
+npm install next@15 react@18 react-dom@18
+npm install lucide-react@latest
 npm i
 npx prisma migrate deploy
 npm run dev

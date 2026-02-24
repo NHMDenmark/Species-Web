@@ -1,5 +1,6 @@
 import formidable from 'formidable'
 import fs from 'fs'
+import { authenticate } from '../../authentication/api-auth'
 
 export const config = {
   api: {
@@ -8,6 +9,14 @@ export const config = {
 }
 
 const post = async (req, res) => {
+
+  // KC authentication
+  const user = await authenticate(req, res)
+  if (!user) return res.status(401).send('Missing token or invalid token')
+
+  // user now contains KC claims
+  console.log('Authenticated user:', user.sub)
+
   const form = new formidable.IncomingForm();
   form.parse(req, async function (err, fields, files) {
     if (err) {
