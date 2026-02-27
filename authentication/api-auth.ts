@@ -1,6 +1,7 @@
 import { verifyToken } from './verify-token'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-export async function authenticate(req, res) {
+export async function authenticate(req: NextApiRequest, res: NextApiResponse) {
   const authHeader = req.headers.authorization
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {

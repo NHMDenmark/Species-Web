@@ -42,7 +42,6 @@ function createHappiness(): string {
     "gently",
     "gracefully",
     "enthusiastically",
-    "",
     "prettily",
     "slowly",    
   ]

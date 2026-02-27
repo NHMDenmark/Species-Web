@@ -12,7 +12,7 @@ declare namespace NodeJS {
     GOOGLE_SECRET: string
     NEXT_PUBLIC_KC_URL: string
     NEXT_PUBLIC_KC_REALM: string
-    NEXT_PUBLIC_KC_CLIENT: string
+    NEXT_PUBLIC_KC_CLIENTS: string
     NEXT_PUBLIC_KC_LOGOUT_REDIRECT: string
   }
 }

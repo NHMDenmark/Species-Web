@@ -1,20 +1,15 @@
-import { useAuth } from "../authentication/use-auth"
 import Layout from "../components/layout"  
+import ProtectedRoute from "../authentication/protected-route"
 
 export default function ActivityPage() {
-
-  const { authenticated, keycloak } = useAuth()
-    
-      if (!authenticated) {
-        keycloak.login()
-        return null
-      }
-
+  
   return (
-    <Layout title="Activity">
-      <p>
-        
-      </p>
-    </Layout>
+    <ProtectedRoute>  
+      <Layout title="Activity">
+        <p>
+          
+        </p>
+      </Layout>
+    </ProtectedRoute>
   )
 }

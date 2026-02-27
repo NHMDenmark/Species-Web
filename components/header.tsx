@@ -3,32 +3,25 @@ import styles from './header.module.css'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import stringToColor from '../functions/stringToColor'
-import keycloak from '../authentication/keycloak'
 import { happiness } from '../happiness'
+import { useAuth } from '../authentication/use-auth'
 
 // The approach used in this component shows how to build a sign in and sign out
 // component that works on pages which support both client and server side
 // rendering, and avoids any flash incorrect content on initial page load.
 export default function Header() {
   
-  const [loading, setLoading] = useState<boolean>(status === 'loading')
+
   const [user, setUser] = useState<any>(null)
+  const { keycloak, authenticated } = useAuth()
+
+  if (!authenticated) return null
 
   useEffect(() => {
     if (keycloak.authenticated && keycloak.tokenParsed) {
       setUser(keycloak.tokenParsed)
-      console.log('User info loaded from token:', keycloak.tokenParsed)
     }
   }, [])
-
-  useEffect(() => {
-    const loaded = status !== 'loading'
-    if (loaded) {
-      setTimeout(() => {
-        setLoading(false)
-      }, 500)
-    }
-  }, [status])
 
   const router = useRouter()
 

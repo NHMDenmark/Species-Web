@@ -27,18 +27,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }, 60000)
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error('Keycloak init failed', err)
       })
   }, [])
 
-  if (!ready) return <div>Click back to login...</div>
+  // if (!ready) return <div>Authenticating..</div>
 
   return (
     <AuthContext.Provider
       value={{
         keycloak,
         authenticated,
+        ready,
         token: keycloak.token,
       }}
     >

@@ -15,7 +15,7 @@ module.exports = {
           NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
           API_SECRET: process.env.API_SECRET,
           NEXT_PUBLIC_KC_REALM: process.env.NEXT_PUBLIC_KC_REALM,
-          NEXT_PUBLIC_KC_CLIENT: process.env.NEXT_PUBLIC_KC_CLIENT,
+          NEXT_PUBLIC_KC_CLIENTS: process.env.NEXT_PUBLIC_KC_CLIENTS,
           NEXT_PUBLIC_KC_URL: process.env.NEXT_PUBLIC_KC_URL,
           NEXT_PUBLIC_KC_LOGOUT_REDIRECT: process.env.NEXT_PUBLIC_KC_LOGOUT_REDIRECT,
         },

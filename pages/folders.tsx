@@ -18,16 +18,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../@/components/ui/tooltip'
-import { useAuth } from '../authentication/use-auth'
+import ProtectedRoute from '../authentication/protected-route'
 
 export default function FoldersPage() {
-
-  const { authenticated, keycloak } = useAuth()
-  
-    if (!authenticated) {
-      keycloak.login()
-      return null
-    }
 
   const router = useRouter()
   const pathname = usePathname()
@@ -164,207 +157,209 @@ export default function FoldersPage() {
   }
 
   return (
-    <Layout title="Folders">
-      {/* <div className="full-w flex justify-center items-center">
-        <Popover onOpenChange={onOpenChange}>
-          <PopoverTrigger asChild>
-            <Button
-              id="date"
-              variant={'outline'}
-              className={cn(
-                'w-[300px] justify-start text-left font-normal',
-                !date && 'text-muted-foreground'
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {date?.from ? (
-                date.to ? (
-                  <>
-                    {format(date.from, 'LLL dd, y')} - {format(date.to, 'LLL dd, y')}
-                  </>
+    <ProtectedRoute>
+      <Layout title="Folders">
+        {/* <div className="full-w flex justify-center items-center">
+          <Popover onOpenChange={onOpenChange}>
+            <PopoverTrigger asChild>
+              <Button
+                id="date"
+                variant={'outline'}
+                className={cn(
+                  'w-[300px] justify-start text-left font-normal',
+                  !date && 'text-muted-foreground'
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date?.from ? (
+                  date.to ? (
+                    <>
+                      {format(date.from, 'LLL dd, y')} - {format(date.to, 'LLL dd, y')}
+                    </>
+                  ) : (
+                    format(date.from, 'LLL dd, y')
+                  )
                 ) : (
-                  format(date.from, 'LLL dd, y')
-                )
-              ) : (
-                <span>Select session range</span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="center">
-            <Calendar
-              mode="range"
-              defaultMonth={defaultDateSelection ?? defaultDate}
-              toDate={new Date()}
-              selected={date}
-              onSelect={onDateSelect}
-              numberOfMonths={3}
-              weekStartsOn={1}
-            />
-          </PopoverContent>
-        </Popover>
-      </div> */}
-      {sessions && sessions.length > 0 && (
-        <div className="mt-4 flex items-end">
-          <div className="w-full">
-            <Select
-              isSearchable
-              placeholder="Select sessions..."
-              isMulti
-              closeMenuOnSelect={false}
-              getOptionValue={(option) => option.overall_min_date_asset_taken.split('T')[0]}
-              options={sessions}
-              formatOptionLabel={(option) => (
-                <>
-                  <div className="flex align-center">
-                    <div className="text-lg">&nbsp;{option.session_index}&nbsp;&nbsp;</div>
-                    <div>
-                      <div className="font-bold text-xs">
-                        {option.overall_min_date_asset_taken.split('T')[0]}
+                  <span>Select session range</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="center">
+              <Calendar
+                mode="range"
+                defaultMonth={defaultDateSelection ?? defaultDate}
+                toDate={new Date()}
+                selected={date}
+                onSelect={onDateSelect}
+                numberOfMonths={3}
+                weekStartsOn={1}
+              />
+            </PopoverContent>
+          </Popover>
+        </div> */}
+        {sessions && sessions.length > 0 && (
+          <div className="mt-4 flex items-end">
+            <div className="w-full">
+              <Select
+                isSearchable
+                placeholder="Select sessions..."
+                isMulti
+                closeMenuOnSelect={false}
+                getOptionValue={(option) => option.overall_min_date_asset_taken.split('T')[0]}
+                options={sessions}
+                formatOptionLabel={(option) => (
+                  <>
+                    <div className="flex align-center">
+                      <div className="text-lg">&nbsp;{option.session_index}&nbsp;&nbsp;</div>
+                      <div>
+                        <div className="font-bold text-xs">
+                          {option.overall_min_date_asset_taken.split('T')[0]}
+                        </div>
+                        <div className=" text-xs">{option.folder_count} folders</div>
                       </div>
-                      <div className=" text-xs">{option.folder_count} folders</div>
                     </div>
-                  </div>
-                </>
-              )}
-              styles={{
-                valueContainer: (base) => ({
-                  ...base,
-                  minHeight: '3rem',
-                }),
-                multiValueLabel: (base, props) => ({
-                  ...base,
-                  backgroundColor:
-                    props.data.folder_count === props.data.approved_folder_count
-                      ? 'rgb(178, 250, 173)'
-                      : 'rgb(251, 255, 126)',
-                  color: 'black',
-                }),
-                multiValue: (base, props) => ({
-                  ...base,
-                  backgroundColor:
-                    props.data.folder_count === props.data.approved_folder_count
-                      ? 'rgb(178, 250, 173)'
-                      : 'rgb(251, 255, 126)',
-                  color: 'black',
-                }),
-                multiValueRemove: (base, props) => ({
-                  ...base,
-                  width: '1.6rem',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  backgroundColor:
-                    props.data.folder_count === props.data.approved_folder_count
-                      ? 'rgb(178, 250, 173)'
-                      : 'rgb(251, 255, 126)',
-                  color: 'black',
-                  ':hover': {
+                  </>
+                )}
+                styles={{
+                  valueContainer: (base) => ({
+                    ...base,
+                    minHeight: '3rem',
+                  }),
+                  multiValueLabel: (base, props) => ({
+                    ...base,
                     backgroundColor:
                       props.data.folder_count === props.data.approved_folder_count
-                        ? 'rgb(170, 240, 165)'
-                        : 'rgb(245, 245, 115)',
+                        ? 'rgb(178, 250, 173)'
+                        : 'rgb(251, 255, 126)',
                     color: 'black',
-                  },
-                }),
-                option: (base, props) => ({
-                  ...base,
-                  backgroundColor:
-                    props.data.folder_count === props.data.approved_folder_count
-                      ? props.isFocused
-                        ? 'rgb(170, 240, 165)'
-                        : 'rgb(178, 250, 173)'
-                      : props.isFocused
-                      ? 'rgb(245, 245, 115)'
-                      : 'rgb(251, 255, 126)',
-                  color: 'black',
-                  ':hover': {
+                  }),
+                  multiValue: (base, props) => ({
+                    ...base,
                     backgroundColor:
                       props.data.folder_count === props.data.approved_folder_count
-                        ? 'rgb(170, 240, 165)'
-                        : 'rgb(245, 245, 115)',
+                        ? 'rgb(178, 250, 173)'
+                        : 'rgb(251, 255, 126)',
                     color: 'black',
-                  },
-                }),
-              }}
-              value={selectedSessions}
-              onChange={(selected) => {
-                const params = new URLSearchParams(searchParams.toString())
-                params.set(
-                  'sessions',
-                  selected
-                    .map((session) => session.overall_min_date_asset_taken.split('T')[0])
-                    .join(',')
-                )
-                params.set('page', '1')
-                router.push(pathname + '?' + params.toString(), undefined, { shallow: false })
-                setSelectedSessions([...selected])
+                  }),
+                  multiValueRemove: (base, props) => ({
+                    ...base,
+                    width: '1.6rem',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    backgroundColor:
+                      props.data.folder_count === props.data.approved_folder_count
+                        ? 'rgb(178, 250, 173)'
+                        : 'rgb(251, 255, 126)',
+                    color: 'black',
+                    ':hover': {
+                      backgroundColor:
+                        props.data.folder_count === props.data.approved_folder_count
+                          ? 'rgb(170, 240, 165)'
+                          : 'rgb(245, 245, 115)',
+                      color: 'black',
+                    },
+                  }),
+                  option: (base, props) => ({
+                    ...base,
+                    backgroundColor:
+                      props.data.folder_count === props.data.approved_folder_count
+                        ? props.isFocused
+                          ? 'rgb(170, 240, 165)'
+                          : 'rgb(178, 250, 173)'
+                        : props.isFocused
+                        ? 'rgb(245, 245, 115)'
+                        : 'rgb(251, 255, 126)',
+                    color: 'black',
+                    ':hover': {
+                      backgroundColor:
+                        props.data.folder_count === props.data.approved_folder_count
+                          ? 'rgb(170, 240, 165)'
+                          : 'rgb(245, 245, 115)',
+                      color: 'black',
+                    },
+                  }),
+                }}
+                value={selectedSessions}
+                onChange={(selected) => {
+                  const params = new URLSearchParams(searchParams.toString())
+                  params.set(
+                    'sessions',
+                    selected
+                      .map((session) => session.overall_min_date_asset_taken.split('T')[0])
+                      .join(',')
+                  )
+                  params.set('page', '1')
+                  router.push(pathname + '?' + params.toString(), undefined, { shallow: false })
+                  setSelectedSessions([...selected])
+                }}
+              />
+            </div>
+            <div className="ml-4">
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      className={`min-h-[50px] rounded border border-solid border-neutral-300 bg-neutral-100 hover:bg-neutral-100 text-neutral-400 hover:text-green-500 hover:border-green-500 ${
+                        viewApproved
+                          ? 'bg-green-500 hover:bg-green-500 text-white hover:text-white border-green-500'
+                          : ''
+                      }`}
+                      onClick={() => {
+                        const params = new URLSearchParams(searchParams.toString())
+                        params.set('approved', Boolean(!viewApproved).toString())
+                        params.set('page', '1')
+                        router.push(pathname + '?' + params.toString(), undefined, { shallow: false })
+                        setViewApproved(!viewApproved)
+                      }}
+                    >
+                      <ClipboardCheck />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Include approved folders</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
+        )}
+        {meta && (
+          <div style={{ marginTop: 50, marginBottom: 30 }}>
+            <Pagination
+              pageCount={meta.pageCount}
+              currentPage={currentPage}
+              setCurrentPage={updateCurrentPage}
+            />
+          </div>
+        )}
+        {loading ? (
+          <FoldersLoading />
+        ) : (
+          <>
+            {folders.map((folder, index, list) => (
+              <CoverCard
+                key={folder.id}
+                folder={folder}
+                index={(currentPage && currentPage > 1 ? (currentPage - 1) * perPage : 0) + index + 1}
+                total={meta ? meta.itemCount : 0}
+              />
+            ))}
+          </>
+        )}
+        {meta && (
+          <div style={{ marginTop: 30, marginBottom: 50 }}>
+            <Pagination
+              pageCount={meta.pageCount}
+              currentPage={currentPage}
+              setCurrentPage={(page) => {
+                updateCurrentPage(page)
+                window.scrollTo({
+                  top: 235,
+                  behavior: 'auto',
+                })
               }}
             />
           </div>
-          <div className="ml-4">
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    className={`min-h-[50px] rounded border border-solid border-neutral-300 bg-neutral-100 hover:bg-neutral-100 text-neutral-400 hover:text-green-500 hover:border-green-500 ${
-                      viewApproved
-                        ? 'bg-green-500 hover:bg-green-500 text-white hover:text-white border-green-500'
-                        : ''
-                    }`}
-                    onClick={() => {
-                      const params = new URLSearchParams(searchParams.toString())
-                      params.set('approved', Boolean(!viewApproved).toString())
-                      params.set('page', '1')
-                      router.push(pathname + '?' + params.toString(), undefined, { shallow: false })
-                      setViewApproved(!viewApproved)
-                    }}
-                  >
-                    <ClipboardCheck />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Include approved folders</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-      )}
-      {meta && (
-        <div style={{ marginTop: 50, marginBottom: 30 }}>
-          <Pagination
-            pageCount={meta.pageCount}
-            currentPage={currentPage}
-            setCurrentPage={updateCurrentPage}
-          />
-        </div>
-      )}
-      {loading ? (
-        <FoldersLoading />
-      ) : (
-        <>
-          {folders.map((folder, index, list) => (
-            <CoverCard
-              key={folder.id}
-              folder={folder}
-              index={(currentPage && currentPage > 1 ? (currentPage - 1) * perPage : 0) + index + 1}
-              total={meta ? meta.itemCount : 0}
-            />
-          ))}
-        </>
-      )}
-      {meta && (
-        <div style={{ marginTop: 30, marginBottom: 50 }}>
-          <Pagination
-            pageCount={meta.pageCount}
-            currentPage={currentPage}
-            setCurrentPage={(page) => {
-              updateCurrentPage(page)
-              window.scrollTo({
-                top: 235,
-                behavior: 'auto',
-              })
-            }}
-          />
-        </div>
-      )}
-    </Layout>
+        )}
+      </Layout>
+    </ProtectedRoute>
   )
 }
