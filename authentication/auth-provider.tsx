@@ -32,8 +32,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
   }, [])
 
-  // if (!ready) return <div>Authenticating..</div>
-
   return (
     <AuthContext.Provider
       value={{

@@ -4,7 +4,7 @@ import Layout from '../components/layout'
 import Pagination from '../components/pagination'
 import type { PaginationMeta } from '../types/PaginationMeta'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import FoldersLoading from '../components/foldersLoading'
 import { FolderWithVersions } from '../prisma/prisma'
 import { DateRange } from 'react-day-picker'
@@ -41,7 +41,7 @@ export default function FoldersPage() {
 
   const [sessions, setSessions] = useState<Session[]>()
   const [viewApproved, setViewApproved] = useState<boolean>(false)
-  const [selectedSessions, setSelectedSessions] = useState<Session[]>()  
+  const [selectedSessions, setSelectedSessions] = useState<Session[]>([])  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -117,86 +117,60 @@ export default function FoldersPage() {
   }, [approved])
 
   useEffect(() => {
+    if (selectedSessions === undefined) return
+
     const fetchData = async () => {
-      const res = await fetch('/api/folders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          currentPage: currentPage,
-          perPage: perPage,
-          from: searchDate?.from?.toDateString(),
-          to: searchDate?.to?.toDateString(),
-          sessions: selectedSessions?.map((session) => session.session_start),
-          onlyNonApproved: !viewApproved,
-        }),
-      })
-      const json = await res.json()
-      setMeta(json.meta)
-      setFolders(json.result)
-    }
-    if (selectedSessions !== undefined) {
       setLoading(true)
-      setFolders([])
-      fetchData().then(() => {
+
+      try {
+        const res = await fetch('/api/folders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            currentPage,
+            perPage,
+            from: searchDate?.from?.toDateString(),
+            to: searchDate?.to?.toDateString(),
+            sessions: selectedSessions?.map(
+              (session) => session.session_start
+            ),
+            onlyNonApproved: !viewApproved,
+          }),
+        })
+
+        if (!res.ok) throw new Error('Fetch failed')
+
+        const json = await res.json()
+
+        setMeta(json.meta)
+        setFolders(Array.isArray(json.result) ? json.result : [])
+      } catch (err) {
+        console.error('Folders fetch failed', err)
+        setFolders([])
+      } finally {
         setLoading(false)
-      })
+      }
     }
+
+    fetchData()
   }, [currentPage, searchDate, selectedSessions, viewApproved])
 
-  function updatePerPage(perPage: number) {
-    setCurrentPage(1)
-    setPerPage(perPage)
-  }
+    function updatePerPage(perPage: number) {
+      setCurrentPage(1)
+      setPerPage(perPage)
+    }
 
   function updateCurrentPage(page: number) {
     const params = new URLSearchParams(searchParams.toString())
     params.set('page', page.toString())
-    router.push(pathname + '?' + params.toString(), undefined, { shallow: true })
+    router.push(pathname + '?' + params.toString())
   }
 
   return (
     <ProtectedRoute>
       <Layout title="Folders">
-        {/* <div className="full-w flex justify-center items-center">
-          <Popover onOpenChange={onOpenChange}>
-            <PopoverTrigger asChild>
-              <Button
-                id="date"
-                variant={'outline'}
-                className={cn(
-                  'w-[300px] justify-start text-left font-normal',
-                  !date && 'text-muted-foreground'
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date?.from ? (
-                  date.to ? (
-                    <>
-                      {format(date.from, 'LLL dd, y')} - {format(date.to, 'LLL dd, y')}
-                    </>
-                  ) : (
-                    format(date.from, 'LLL dd, y')
-                  )
-                ) : (
-                  <span>Select session range</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="center">
-              <Calendar
-                mode="range"
-                defaultMonth={defaultDateSelection ?? defaultDate}
-                toDate={new Date()}
-                selected={date}
-                onSelect={onDateSelect}
-                numberOfMonths={3}
-                weekStartsOn={1}
-              />
-            </PopoverContent>
-          </Popover>
-        </div> */}
         {sessions && sessions.length > 0 && (
           <div className="mt-4 flex items-end">
             <div className="w-full">

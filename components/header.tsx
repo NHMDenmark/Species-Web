@@ -6,11 +6,7 @@ import stringToColor from '../functions/stringToColor'
 import { happiness } from '../happiness'
 import { useAuth } from '../authentication/use-auth'
 
-// The approach used in this component shows how to build a sign in and sign out
-// component that works on pages which support both client and server side
-// rendering, and avoids any flash incorrect content on initial page load.
 export default function Header() {
-  
 
   const [user, setUser] = useState<any>(null)
   const { keycloak, authenticated } = useAuth()
