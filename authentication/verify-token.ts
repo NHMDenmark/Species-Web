@@ -26,7 +26,7 @@ export async function verifyToken(token: string) {
   const allowed = clientList.some(c =>
     ALLOWED_CLIENTS.includes(c as string)
   )
-  console.log(allowed, clientList, ALLOWED_CLIENTS)
+  
   if (!allowed) {
     throw new Error('Client not allowed')
   }

@@ -10,13 +10,9 @@ export const config = {
 }
 
 const post = async (req, res) => {
-  console.log('Received POST request to /api/folderupload')
   // KC authentication
   const user = await authenticate(req, res)
   if (!user) return res.status(401).send('Missing token or invalid token')
-
-  // user now contains KC claims
-  console.log('Authenticated user:', user.sub)
 
   const data = req.body
   console.log(data)

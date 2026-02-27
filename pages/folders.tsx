@@ -263,7 +263,7 @@ export default function FoldersPage() {
                       .join(',')
                   )
                   params.set('page', '1')
-                  router.push(pathname + '?' + params.toString(), undefined, { shallow: false })
+                  router.push(pathname + '?' + params.toString())
                   setSelectedSessions([...selected])
                 }}
               />
@@ -282,7 +282,7 @@ export default function FoldersPage() {
                         const params = new URLSearchParams(searchParams.toString())
                         params.set('approved', Boolean(!viewApproved).toString())
                         params.set('page', '1')
-                        router.push(pathname + '?' + params.toString(), undefined, { shallow: false })
+                        router.push(pathname + '?' + params.toString())
                         setViewApproved(!viewApproved)
                       }}
                     >

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useAuth } from './use-auth'
 
 export default function ProtectedRoute({
@@ -8,14 +8,26 @@ export default function ProtectedRoute({
 }) {
   const { authenticated, ready, keycloak } = useAuth()
 
+  const loginTriggered = useRef(false)
+
   useEffect(() => {
-    if (ready && !authenticated) {
+    if (!ready) return
+
+    if (!authenticated && !loginTriggered.current) {
+      loginTriggered.current = true
       keycloak.login()
     }
-  }, [ready, authenticated])
+  }, [ready, authenticated, keycloak])
 
-  if (!ready) return null
-  if (!authenticated) return null
+  // wait for keycloak initialization
+  if (!ready) {
+    return <div>Authenticating...</div>
+  }
+
+  // while redirecting to login
+  if (!authenticated) {
+    return null
+  }
 
   return <>{children}</>
 }

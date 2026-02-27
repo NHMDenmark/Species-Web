@@ -11,6 +11,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (initialized.current) return
     initialized.current = true
 
+    let interval: NodeJS.Timeout | undefined
+
     keycloak
       .init({
         onLoad: 'check-sso',   // not forcing login globally
@@ -30,7 +32,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .catch((err: any) => {
         console.error('Keycloak init failed', err)
       })
-  }, [])
+    return () => {
+        if (interval) {
+          clearInterval(interval)
+        }
+      }
+    }, [])
 
   return (
     <AuthContext.Provider
